@@ -1,0 +1,27 @@
+{
+  "name": "webtomobile",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.2",
+    "archiver": "^6.0.1",
+    "axios": "^1.5.1",
+    "body-parser": "^1.20.2",
+    "child_process": "^1.0.2",
+    "connect-history-api-fallback": "^2.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^7.6.3",
+    "multer": "^1.4.5-lts.1",
+    "sqlite3": "^5.1.6",
+    "xcode": "^3.0.1"
+  }
+}
