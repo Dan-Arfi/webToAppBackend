@@ -112,7 +112,7 @@ router.post("/", upload.single("logo"), async (req, res) => {
                     }
 
                     exec(
-                      `git add . && git commit -m '21qwe' && git push origin ${branchName}`,
+                      `git branch`,
                       (error, stdout, stderr) => {
                         if (error) {
                           console.log("error: " + error);
