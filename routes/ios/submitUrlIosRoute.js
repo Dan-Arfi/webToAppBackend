@@ -114,9 +114,11 @@ router.post("/", upload.single("logo"), async (req, res) => {
                     exec(
                       `git branch`,
                       (error, stdout, stderr) => {
-                        if (error) {
-                          console.log("error: " + error);
-                        }
+                        
+                        console.log("error: " + error);
+                        console.log("stdout: " + stdout);
+                        console.log("stderr: " + stderr);
+                        
                         exec(
                           `cd ${projectPath} && xcodebuild -project 'iosTemplate.xcodeproj' -sdk iphonesimulator -configuration Debug`,
                           async (error, stdout, stderr) => {
