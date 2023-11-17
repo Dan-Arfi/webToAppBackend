@@ -18,7 +18,7 @@ router.post("/", upload.single("logo"), async (req, res) => {
     const token = Date.now(); // You need to define this function
     const body = req.body;
     console.log(req.body);
-    const branchName = `branch-${token}`
+    const branchName = `branch-${token}`;
     const url = body["url"];
     const name = body["name"];
     const packageName = body["packageName"];
@@ -37,7 +37,8 @@ router.post("/", upload.single("logo"), async (req, res) => {
 
           var projectPath = "iosProjects/iosTemplate" + token;
 
-          var xcodePath = projectPath + "/iosTemplate.xcodeproj/project.pbxproj";
+          var xcodePath =
+            projectPath + "/iosTemplate.xcodeproj/project.pbxproj";
           const project = xcode.project(xcodePath);
 
           project.parseSync();
@@ -63,7 +64,9 @@ router.post("/", upload.single("logo"), async (req, res) => {
                 console.error("Error writing to the Xcode project file:", err);
                 return reject(err);
               }
-              console.log("Bundle identifier (bundle ID) updated successfully.");
+              console.log(
+                "Bundle identifier (bundle ID) updated successfully."
+              );
               console.log("success!");
 
               const contentViewPath = path.join(
@@ -88,7 +91,9 @@ router.post("/", upload.single("logo"), async (req, res) => {
                     console.error("Error writing to ContentView.swift:", err);
                     return reject(err);
                   }
-                  console.log("ContentView.swift has been updated successfully.");
+                  console.log(
+                    "ContentView.swift has been updated successfully."
+                  );
 
                   const appIconPath = path.join(
                     projectPath,
@@ -107,66 +112,84 @@ router.post("/", upload.single("logo"), async (req, res) => {
                     }
 
                     exec(
-                      `cd ${projectPath} && xcodebuild -project 'iosTemplate.xcodeproj' -sdk iphonesimulator -configuration Debug`,
-                      async (error, stdout, stderr) => {
+                      `git add . && git commit -m '21qwe' && git push origin ${branchName}`,
+                      (error, stdout, stderr) => {
                         if (error) {
-                          console.error(`Error building debug: ${error}`);
-                          return reject(error);
+                          console.log("error: " + error);
                         }
-                        console.log("Simulator demo built successfully");
-                        const appFolderPath = path.join(
-                          projectPath,
-                          "build",
-                          "Debug-iphonesimulator"
-                        );
-
-                        const appPath = path.join(
-                          projectPath,
-                          "build",
-                          "Debug-iphonesimulator"
-                        );
-                        const output = fs.createWriteStream(
-                          path.join(projectPath, `iosTemplate${token}.zip`)
-                        );
-                        const archive = archiver("zip", { zlib: { level: 9 } });
-                        archive.pipe(output);
-                        archive.directory(appPath, false);
-                        archive.finalize();
-
-                        output.on("close", async () => {
-                          console.log(archive.pointer() + " total bytes");
-                          console.log(
-                            "Archiver has been finalized and the output file descriptor has closed."
-                          );
-                          const file = path.join(
-                            projectPath,
-                            `iosTemplate${token}.zip`
-                          );
-
-                          const data = fs.readFileSync(file);
-
-                          db.run(
-                            "INSERT INTO ios_demos (token, debugSimulator, name, packageName, url, logo, versionCode) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                            [token, data, name, packageName, url, logoData, 1.0],
-                            function (err) {
-                              if (err) {
-                                console.error(
-                                  "Error storing ios zip in the database:",
-                                  err
-                                );
-                                return reject(err);
-                              }
-                              fs.unlinkSync(file);
-                              const responseData = {
-                                token: token,
-                                name: name,
-                                url: url,
-                                packageName: packageName,
-                              };
-                              res.status(200).send(responseData);
+                        exec(
+                          `cd ${projectPath} && xcodebuild -project 'iosTemplate.xcodeproj' -sdk iphonesimulator -configuration Debug`,
+                          async (error, stdout, stderr) => {
+                            if (error) {
+                              console.error(`Error building debug: ${error}`);
+                              return reject(error);
                             }
-                          );
-                        });
+                            console.log("Simulator demo built successfully");
+                            const appFolderPath = path.join(
+                              projectPath,
+                              "build",
+                              "Debug-iphonesimulator"
+                            );
+
+                            const appPath = path.join(
+                              projectPath,
+                              "build",
+                              "Debug-iphonesimulator"
+                            );
+                            const output = fs.createWriteStream(
+                              path.join(projectPath, `iosTemplate${token}.zip`)
+                            );
+                            const archive = archiver("zip", {
+                              zlib: { level: 9 },
+                            });
+                            archive.pipe(output);
+                            archive.directory(appPath, false);
+                            archive.finalize();
+
+                            output.on("close", async () => {
+                              console.log(archive.pointer() + " total bytes");
+                              console.log(
+                                "Archiver has been finalized and the output file descriptor has closed."
+                              );
+                              const file = path.join(
+                                projectPath,
+                                `iosTemplate${token}.zip`
+                              );
+
+                              const data = fs.readFileSync(file);
+
+                              db.run(
+                                "INSERT INTO ios_demos (token, debugSimulator, name, packageName, url, logo, versionCode) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                                [
+                                  token,
+                                  data,
+                                  name,
+                                  packageName,
+                                  url,
+                                  logoData,
+                                  1.0,
+                                ],
+                                function (err) {
+                                  if (err) {
+                                    console.error(
+                                      "Error storing ios zip in the database:",
+                                      err
+                                    );
+                                    return reject(err);
+                                  }
+                                  fs.unlinkSync(file);
+                                  const responseData = {
+                                    token: token,
+                                    name: name,
+                                    url: url,
+                                    packageName: packageName,
+                                  };
+                                  res.status(200).send(responseData);
+                                }
+                              );
+                            });
+                          }
+                        );
                       }
                     );
                   });
