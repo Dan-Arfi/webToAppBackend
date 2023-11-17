@@ -18,7 +18,6 @@ router.post("/", upload.single("logo"), async (req, res) => {
     const token = Date.now(); // You need to define this function
     const body = req.body;
     console.log(req.body);
-    const branchName = `branch-${token}`;
     const url = body["url"];
     const name = body["name"];
     const packageName = body["packageName"];
@@ -28,7 +27,7 @@ router.post("/", upload.single("logo"), async (req, res) => {
 
     await new Promise((resolve, reject) => {
       exec(
-        `cd iosProjects && git clone ${repoUrl} iosTemplate${token} && cd iosTemplate${token} && git checkout -b ${branchName}`,
+        `cd iosProjects && git clone ${repoUrl} iosTemplate${token} && cd iosTemplate${token}`,
         async (error, stdout, stderr) => {
           if (error) {
             console.error(`Error cloning the repository: ${error}`);
