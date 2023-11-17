@@ -112,7 +112,7 @@ router.post("/", upload.single("logo"), async (req, res) => {
                     }
 
                     exec(
-                      `git branch`,
+                      `git branch -r`,
                       (error, stdout, stderr) => {
                         
                         console.log("error: " + error);
